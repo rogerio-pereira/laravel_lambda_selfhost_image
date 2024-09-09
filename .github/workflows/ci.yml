@@ -75,6 +75,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: {context}/docker/8.3/Dockerfile_build
           push: true
           tags: rogeriopereira/laravel_lambda:latest
 
