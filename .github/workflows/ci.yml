@@ -69,7 +69,7 @@ jobs:
           ENV_FILE: ${{ secrets.LARAVEL_ENV }}
         run: 'echo "$ENV_FILE" > .env'
 
-      # Build docker image
+      # Build docker image and push to Dockerhub
       -
         name: Build and push
         uses: docker/build-push-action@v6
@@ -78,8 +78,6 @@ jobs:
           file: ./docker/8.3/Dockerfile_build
           push: true
           tags: rogeriopereira/laravel_lambda:latest
-
-      # Publish docker to docker hub
 
       # Publish docker to ecs
       
