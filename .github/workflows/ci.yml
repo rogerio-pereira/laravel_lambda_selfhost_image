@@ -1,0 +1,48 @@
+name: Deploy
+
+on: 
+  push:
+      
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    name: CI
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Configure PHP 8.3
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: 8.3
+          extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, zip, sqlite3
+  
+      # - name: Copy ENV file
+      #   shell: bash
+      #   env:
+      #     ENV_FILE: ${{ secrets.LARAVEL_ENV }}
+      #   run: 'echo "$ENV_FILE" > .env'
+          
+      - name: Install composer dependencies
+        run: composer install --no-dev
+          
+      - name: Install node dependencies
+        run: npm ci
+          
+      - name: Build Frontend
+        run: npm run build
+      
+      - name: Run tests
+        run: php artisan test
+        
+  # cd:
+    # runs-on: ubuntu-latest
+    # name: CI
+    # steps:
+    #   - uses: actions/checkout@v2
+
+      # Build docker image
+
+      # Publish docker to docker hub
+
+      # Publish docker to ecs
+      
