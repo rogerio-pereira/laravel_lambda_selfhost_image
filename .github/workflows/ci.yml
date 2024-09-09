@@ -62,12 +62,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
   
-      #Copy .env file
-      - name: Copy ENV file
-        shell: bash
-        env:
-          ENV_FILE: ${{ secrets.LARAVEL_ENV }}
-        run: 'echo "$ENV_FILE" > .env'
+      # Copy .env file from github
+      # - name: Copy ENV file
+      #   shell: bash
+      #   env:
+      #     ENV_FILE: ${{ secrets.LARAVEL_ENV }}
+      #   run: 'echo "$ENV_FILE" > .env'
+
+      # Copy .env from aws secret manager
+      - 
+        name: Export ENV from AWS SecretManager
+        uses: say8425/aws-secrets-manager-actions@v2
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          SECRET_NAME: ${{ secrets.SECRET_NAME }}
+          OUTPUT_PATH: '.env' # optional
 
       # Build docker image and push to Dockerhub
       -
