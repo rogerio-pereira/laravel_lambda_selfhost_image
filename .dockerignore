@@ -1,0 +1,4 @@
+.docker/
+.vscode/
+storage/logs/
+*.log
