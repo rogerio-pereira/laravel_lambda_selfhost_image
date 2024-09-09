@@ -79,5 +79,5 @@ jobs:
           push: true
           tags: rogeriopereira/laravel_lambda:latest
 
-      # Publish docker to ecs
+      # Publish docker to ecr
       
