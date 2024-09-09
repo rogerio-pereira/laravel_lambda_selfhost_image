@@ -23,7 +23,7 @@ jobs:
       #   run: 'echo "$ENV_FILE" > .env'
           
       - name: Install composer dependencies
-        run: composer install --no-dev
+        run: composer install
           
       - name: Install node dependencies
         run: npm ci
