@@ -112,5 +112,6 @@ jobs:
           push: true
           tags: ${{ secrets.ECR_REGISTRY_URI }}:latest
           # \/ This will build a docker image with Image manifest media type application/vnd.docker.distribution.manifest.v2+json
-          platforms: linux/amd64,linux/arm64  # Add this line to specify platforms
+          # platforms: linux/amd64,linux/arm64  # Add this line to specify platforms
+          platforms: linux/386  # Add this line to specify platforms
       
