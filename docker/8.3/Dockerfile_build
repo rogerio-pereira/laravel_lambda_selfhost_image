@@ -14,7 +14,7 @@ ENV XDEBUG_MODE='off'
 # ENV XDEBUG_CONFIG='client_host=host.docker.internal'
 ENV IGNITION_LOCAL_SITES_PATH='${PWD}'
 
-WORKDIR /var/www/html
+WORKDIR /var/task
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
@@ -70,7 +70,7 @@ RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 # COPY php.ini /etc/php/8.3/cli/conf.d/99-sail.ini
 # RUN chmod +x /usr/local/bin/start-container
 
-COPY . .
+COPY . /var/task
 
 #Composer
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
