@@ -1,5 +1,12 @@
 #!/bin/sh
 
+#NOT WORKING \/
 # Start the Laravel built-in server (php artisan serve)
 # Use folder for docker project (WORKDIR)
-php /var/www/html/artisan serve --host=0.0.0.0 --port=8080
+# php /var/www/html/artisan serve --host=0.0.0.0 --port=8080
+
+#NEW
+# Run Laravel on Lambda, no need to start a server like `php artisan serve`
+php /var/www/html/artisan route:list # You can add any initial Laravel setup you need
+# Lambda's entry point for handling requests
+php /var/www/html/public/index.php
