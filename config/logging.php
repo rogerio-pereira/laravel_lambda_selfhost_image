@@ -131,8 +131,8 @@ return [
         ],
 
         'cloudwatch' => [
-            // 'driver' => 'custom',
-            'driver' => 'monolog',
+            'driver' => 'custom',
+            // 'driver' => 'monolog',
             'name' => env('CLOUDWATCH_LOG_NAME', ''),
             'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
             'credentials' => [
