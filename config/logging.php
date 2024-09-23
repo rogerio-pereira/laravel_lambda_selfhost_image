@@ -1,6 +1,7 @@
 <?php
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
+use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\CloudWatchHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
@@ -130,22 +131,21 @@ return [
         ],
 
         'cloudwatch' => [
+            // 'driver' => 'custom',
             'driver' => 'monolog',
-            'handler' => CloudWatchHandler::class,
-            'handler_with' => [
-                'client' => new CloudWatchLogsClient([
-                    'region' => env('AWS_DEFAULT_REGION', 'your-region'),
-                    'version' => 'latest',
-                    'credentials' => [
-                        'key' => env('AWS_ACCESS_KEY_ID'),
-                        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-                    ],
-                ]),
-                'log_group' => env('CLOUDWATCH_LOG_GROUP', 'your-log-group'),
-                'log_stream' => env('CLOUDWATCH_LOG_STREAM', 'your-log-stream'),
-                'retention' => env('CLOUDWATCH_LOG_RETENTION', 7), // Retention in days
+            'name' => env('CLOUDWATCH_LOG_NAME', ''),
+            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+            'credentials' => [
+                'key' => env('AWS_ACCESS_KEY_ID'),
+                'secret' => env('AWS_SECRET_ACCESS_KEY'),
             ],
-            'level' => env('LOG_LEVEL', 'debug'),
+            'stream_name' => env('CLOUDWATCH_LOG_STREAM_NAME', 'laravel_app'),
+            'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
+            'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
+            'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
+            'formatter' => \Monolog\Formatter\JsonFormatter::class,       
+            'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 10000),    
+            'via' => \Pagevamp\Logger::class,
         ],
 
     ],
