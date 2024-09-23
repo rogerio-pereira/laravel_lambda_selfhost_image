@@ -1,14 +1,31 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    try{
+        Log::info('welcome');
+
+        return view('welcome');
+    }
+    catch(\Exception $e)
+    {
+        dd($e);
+    }
 });
 
 Route::get('/healthcheck', function () {
-    return response()->json(['status' => 'ok']);
+    try{
+        Log::info('healthcheck');
+
+        return response()->json(['status' => 'ok']);
+    }
+    catch(\Exception $e)
+    {
+        dd($e);
+    }
 });
 
 Route::get('/dashboard', function () {
