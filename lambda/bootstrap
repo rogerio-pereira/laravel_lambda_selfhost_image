@@ -7,6 +7,6 @@
 
 #NEW
 # Run Laravel on Lambda, no need to start a server like `php artisan serve`
-php /var/www/html/artisan route:list # You can add any initial Laravel setup you need
+#php /var/www/html/artisan route:list # You can add any initial Laravel setup you need
 # Lambda's entry point for handling requests
 php /var/www/html/public/index.php
