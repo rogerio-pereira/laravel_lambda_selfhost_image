@@ -118,12 +118,22 @@ jobs:
       #     tags: ${{ secrets.ECR_REGISTRY_URI }}:latest
       #     platforms: linux/amd64
       #     build-args: "--format docker" # Required to build image with Image manifest media type application/vnd.docker.distribution.manifest.v2+json
+      - 
+        name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./docker/8.3/Dockerfile_build
+          push: true
+          tags: ${{ secrets.ECR_REGISTRY_URI }}:latest
+          platforms: linux/amd64
+          provenance: false # Disable provenance to avoid OCI format and use Docker v2 manifest
 
       # Disable OCI and use Docker manifest v2
-      - name: Build and push Docker image
-        run: |
-          export DOCKER_CLI_EXPERIMENTAL=disabled
-          docker buildx build --platform linux/amd64 --push -t ${{ secrets.ECR_REGISTRY_URI }}:latest -f ./docker/8.3/Dockerfile_build .
+      # - name: Build and push Docker image
+      #   run: |
+      #     export DOCKER_CLI_EXPERIMENTAL=disabled
+      #     docker buildx build --platform linux/amd64 --push -t ${{ secrets.ECR_REGISTRY_URI }}:latest -f ./docker/8.3/Dockerfile_build .
 
       # - name: Push Docker image to ECR
       #   run: docker push ${{ secrets.ECR_REGISTRY_URI }}:latest
