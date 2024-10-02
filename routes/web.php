@@ -5,27 +5,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    try{
-        Log::info('welcome');
-
-        return view('welcome');
-    }
-    catch(\Exception $e)
-    {
-        dd($e);
-    }
+    return view('welcome');
 });
 
 Route::get('/healthcheck', function () {
-    try{
-        Log::info('healthcheck');
-
-        return response()->json(['status' => 'ok']);
-    }
-    catch(\Exception $e)
-    {
-        dd($e);
-    }
+    return response()->json(['status' => 'laravel ok']);
 });
 
 Route::get('/dashboard', function () {
