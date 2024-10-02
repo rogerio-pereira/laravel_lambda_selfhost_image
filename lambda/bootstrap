@@ -1,12 +1,34 @@
-#!/bin/sh
+#!/bin/bash
 
-#NOT WORKING \/
-# Start the Laravel built-in server (php artisan serve)
-# Use folder for docker project (WORKDIR)
-# php /var/www/html/artisan serve --host=0.0.0.0 --port=8080
+set -euo pipefail
 
-#NEW
-# Run Laravel on Lambda, no need to start a server like `php artisan serve`
-#php /var/www/html/artisan route:list # You can add any initial Laravel setup you need
-# Lambda's entry point for handling requests
-php /var/www/html/public/index.php
+# Infinite loop to process incoming events
+while true; do
+  # Create a temporary file to store headers
+  HEADERS=$(mktemp)
+
+  # Get the next event (this will block until an event is received)
+  EVENT_DATA=$(curl -sS -LD "$HEADERS" "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next")
+
+  # Extract the request ID from the headers
+  REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
+
+  # Process the event using Laravel's entry point (public/index.php)
+  LARAVEL_RESPONSE=$(php /var/www/html/public/index.php "$EVENT_DATA" 2>&1)
+
+  #Build Response to send back to API Gateway
+  RESPONSE_JSON=$(cat <<EOF
+{
+  "statusCode": 200,
+  "headers": {
+    "Content-Type": "*/*"
+  },
+  "body": $(echo "$LARAVEL_RESPONSE" | jq -Rs .)
+}
+EOF
+  )
+  
+  # Send the response back to Lambda
+  CURL_RESPONSE=$(curl -sS -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response" \
+    -d "$RESPONSE_JSON")
+done
