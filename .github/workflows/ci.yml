@@ -112,4 +112,5 @@ jobs:
           push: true
           tags: ${{ secrets.ECR_REGISTRY_URI }}:latest
           platforms: linux/amd64
+          build-args: "--format docker" # Required to build image with Image manifest media type application/vnd.docker.distribution.manifest.v2+json
       
