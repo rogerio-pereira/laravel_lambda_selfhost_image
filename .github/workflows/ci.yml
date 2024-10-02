@@ -125,7 +125,7 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=disabled
           docker buildx build --platform linux/amd64 --push -t ${{ secrets.ECR_REGISTRY_URI }}:latest -f ./docker/8.3/Dockerfile_build .
 
-      - name: Push Docker image to ECR
-        run: docker push ${{ secrets.ECR_REGISTRY_URI }}:latest
+      # - name: Push Docker image to ECR
+      #   run: docker push ${{ secrets.ECR_REGISTRY_URI }}:latest
 
       
