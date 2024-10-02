@@ -55,12 +55,16 @@ jobs:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          install: true # Required to build image with Image manifest media type application/vnd.docker.distribution.manifest.v2+json
+
       # -
       #   name: Login to Docker Hub
       #   uses: docker/login-action@v3
       #   with:
       #     username: ${{ secrets.DOCKERHUB_USERNAME }}
       #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - 
         name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -68,6 +72,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
       -  
         name: Login to ECR
         uses: docker/login-action@v2
@@ -103,22 +108,15 @@ jobs:
       #     tags: rogeriopereira/laravel_lambda:latest
 
       # Publish docker to ecr
-      # - 
-      #   name: Build and push
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: .
-      #     file: ./docker/8.3/Dockerfile_build
-      #     push: true
-      #     tags: ${{ secrets.ECR_REGISTRY_URI }}:latest
-      #     platforms: linux/amd64
-      #     build-args: "--format docker" # Required to build image with Image manifest media type application/vnd.docker.distribution.manifest.v2+json
+      - 
+        name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./docker/8.3/Dockerfile_build
+          push: true
+          tags: ${{ secrets.ECR_REGISTRY_URI }}:latest
+          platforms: linux/amd64
+          build-args: "--format docker" # Required to build image with Image manifest media type application/vnd.docker.distribution.manifest.v2+json
 
-      # Build Docker Image
-      - name: Build Docker image
-        run: docker build --platform linux/amd64 --format docker -t ${{ secrets.ECR_REGISTRY_URI }}:latest -f ./docker/8.3/Dockerfile_build .
-
-      # Push image to ECR
-      - name: Push Docker image to ECR
-        run: docker push ${{ secrets.ECR_REGISTRY_URI }}:latest
       
