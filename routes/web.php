@@ -5,11 +5,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    // return view('welcome');
-    return response()->json([
-        'status' => 'laravel ok',
-        'message' => 'This is a message from api',
-    ], 200);
+    return view('welcome');
+    // return response()->json([
+    //     'status' => 'laravel ok',
+    //     'message' => 'This is a message from api',
+    // ], 200);
 });
 
 Route::get('/healthcheck', function () {
