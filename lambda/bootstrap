@@ -13,22 +13,26 @@ while true; do
   # Extract the request ID from the headers
   REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
 
-  # Process the event using Laravel's entry point (public/index.php)
-  LARAVEL_RESPONSE=$(php /var/www/html/public/index.php "$EVENT_DATA" 2>&1)
+  # Parse the path and method from the event data
+  PATH=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.path')
+  METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
 
-  #Build Response to send back to API Gateway
+  # Pass the path, method, and full request data to Laravel
+  LARAVEL_RESPONSE=$(php /var/www/html/public/index.php --path="$PATH" --method="$METHOD" "$EVENT_DATA" 2>&1)
+
+  # Build response to send back to API Gateway
   RESPONSE_JSON=$(cat <<EOF
 {
   "statusCode": 200,
   "headers": {
-    "Content-Type": "*/*"
+    "Content-Type": "text/html"
   },
   "body": $(echo "$LARAVEL_RESPONSE" | jq -Rs .)
 }
 EOF
   )
-  
+
   # Send the response back to Lambda
-  CURL_RESPONSE=$(curl -sS -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response" \
-    -d "$RESPONSE_JSON")
+  curl -sS -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response" \
+    -d "$RESPONSE_JSON"
 done
