@@ -21,7 +21,7 @@ while true; do
 #   LARAVEL_RESPONSE=$(php /var/www/html/public/index.php --path="$PATH" --method="$METHOD" "$EVENT_DATA" 2>&1)
 # LARAVEL_RESPONSE=$(php /var/www/html/public/index.php "$EVENT_DATA" 2>&1)
 # LARAVEL_RESPONSE=$(php -r '$_SERVER["REQUEST_METHOD"] = "'"$REQ_METHOD"'"; $_SERVER["REQUEST_URI"] = "'"$PATH"'"; require "/var/www/html/public/index.php";' 2>&1)
-LARAVEL_RESPONSE=$(php -r '$_SERVER["REQUEST_METHOD"] = "GET"; $_SERVER["REQUEST_URI"] = "'$PATH'"; require "/var/www/html/public/index.php";' 2>&1)
+LARAVEL_RESPONSE=$(/usr/bin/php -r '$_SERVER["REQUEST_METHOD"] = "GET"; $_SERVER["REQUEST_URI"] = "'$PATH'"; require "/var/www/html/public/index.php";' 2>&1)
 
   # Build response to send back to API Gateway
   RESPONSE_JSON=$(cat <<EOF
