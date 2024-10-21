@@ -15,13 +15,13 @@ while true; do
 
   # Parse the path and method from the event data
   PATH=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.path')
-#   REQ_METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
+  REQ_METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
 
   # Pass the path, method, and full request data to Laravel
 #   LARAVEL_RESPONSE=$(php /var/www/html/public/index.php --path="$PATH" --method="$METHOD" "$EVENT_DATA" 2>&1)
 # LARAVEL_RESPONSE=$(php /var/www/html/public/index.php "$EVENT_DATA" 2>&1)
 # LARAVEL_RESPONSE=$(php -r '$_SERVER["REQUEST_METHOD"] = "'"$REQ_METHOD"'"; $_SERVER["REQUEST_URI"] = "'"$PATH"'"; require "/var/www/html/public/index.php";' 2>&1)
-LARAVEL_RESPONSE=$(REQUEST_METHOD="GET" REQUEST_URI="$PATH" php /var/www/html/public/index.php 2>&1)
+LARAVEL_RESPONSE=$(REQUEST_METHOD="$REQ_METHOD" REQUEST_URI="$PATH" php /var/www/html/public/index.php 2>&1)
 
   # Build response to send back to API Gateway
   RESPONSE_JSON=$(cat <<EOF
