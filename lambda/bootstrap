@@ -44,5 +44,5 @@ EOF
 
   # Send the response back to Lambda
   curl -sS -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response" \
-    -d "$LARAVEL_RESPONSE"
+    -d "$RESPONSE_JSON"
 done
