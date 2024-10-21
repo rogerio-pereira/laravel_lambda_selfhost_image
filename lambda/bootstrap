@@ -22,20 +22,21 @@ while true; do
 # LARAVEL_RESPONSE=$(php /var/www/html/public/index.php "$EVENT_DATA" 2>&1)
 # LARAVEL_RESPONSE=$(php -r '$_SERVER["REQUEST_METHOD"] = "'"$REQ_METHOD"'"; $_SERVER["REQUEST_URI"] = "'"$PATH"'"; require "/var/www/html/public/index.php";' 2>&1)
 LARAVEL_RESPONSE=$(/usr/bin/php -r '$_SERVER["REQUEST_METHOD"] = "GET"; $_SERVER["REQUEST_URI"] = "'$PATH'"; require "/var/www/html/public/index.php";' 2>&1)
+echo $LARAVEL_RESPONSE
 
   # Build response to send back to API Gateway
-  RESPONSE_JSON=$(cat <<EOF
-{
-  "statusCode": 200,
-  "headers": {
-    "Content-Type": "text/html"
-  },
-  "body": $(echo "$LARAVEL_RESPONSE" | jq -Rs .)
-}
-EOF
-  )
+#   RESPONSE_JSON=$(cat <<EOF
+# {
+#   "statusCode": 200,
+#   "headers": {
+#     "Content-Type": "text/html"
+#   },
+#   "body": $(echo "$LARAVEL_RESPONSE" | jq -Rs .)
+# }
+# EOF
+#   )
 
   # Send the response back to Lambda
   curl -sS -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response" \
-    -d "$RESPONSE_JSON"
+    -d "$LARAVEL_RESPONSE"
 done
