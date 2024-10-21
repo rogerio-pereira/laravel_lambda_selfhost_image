@@ -15,10 +15,7 @@ while true; do
 
   # Parse the path and method from the event data
   PATH=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.path')
-
-  echo $EVENT_DATA
-  echo $PATH
-#   METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
+  METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
 
   # Pass the path, method, and full request data to Laravel
 #   LARAVEL_RESPONSE=$(php /var/www/html/public/index.php --path="$PATH" --method="$METHOD" "$EVENT_DATA" 2>&1)
