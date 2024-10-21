@@ -14,11 +14,13 @@ while true; do
   REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
 
   # Parse the path and method from the event data
-  PATH=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.path')
+#   PATH=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.path')
 #   METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
 
   # Pass the path, method, and full request data to Laravel
-  LARAVEL_RESPONSE=$(php /var/www/html/public/index.php --path="$PATH" --method="$METHOD" "$EVENT_DATA" 2>&1)
+#   LARAVEL_RESPONSE=$(php /var/www/html/public/index.php --path="$PATH" --method="$METHOD" "$EVENT_DATA" 2>&1)
+# LARAVEL_RESPONSE=$(php /var/www/html/public/index.php "$EVENT_DATA" 2>&1)
+LARAVEL_RESPONSE=$(php -r '$_SERVER["REQUEST_METHOD"] = "GET"; $_SERVER["REQUEST_URI"] = "$PATH"; require "public/index.php";' 2>&1)
 
   # Build response to send back to API Gateway
   RESPONSE_JSON=$(cat <<EOF
