@@ -14,7 +14,10 @@ while true; do
   REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
 
   # Parse the path and method from the event data
-#   PATH=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.path')
+  PATH=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.path')
+
+  echo $EVENT_DATA
+  echo $PATH
 #   METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
 
   # Pass the path, method, and full request data to Laravel
