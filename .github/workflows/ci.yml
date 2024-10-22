@@ -88,11 +88,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
           SECRET_NAME: ${{ secrets.SECRET_NAME }}
-          OUTPUT_PATH: '.env' # optional+
-
-      # Rename exported AWS Secret file to .env
-      - name: Rename exported asm_secret file to .env
-        run: mv asm_secret .env
+          OUTPUT_PATH: '.env' # optional
 
       # Build docker image and push to Dockerhub
       # -
