@@ -79,7 +79,7 @@ COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 RUN composer install --no-dev
 
 #npm
-RUN npm ci && \
+RUN npm install && \
     npm run build
 
 EXPOSE 8080/tcp
