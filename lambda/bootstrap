@@ -9,13 +9,13 @@ while true; do
 
   # Get the next event (this will block until an event is received)
   EVENT_DATA=$(curl -sS -LD "$HEADERS" "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next")
+  echo $EVENT_DATA
 
   # Extract the request ID from the headers
   REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
 
   # Parse the path and method from the event data
   REQ_PATH=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.path')
-
   REQ_METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
 
   # Pass the path, method, and full request data to Laravel
