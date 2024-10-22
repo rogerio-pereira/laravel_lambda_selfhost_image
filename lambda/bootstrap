@@ -9,7 +9,6 @@ while true; do
 
   # Get the next event (this will block until an event is received)
   EVENT_DATA=$(curl -sS -LD "$HEADERS" "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next")
-  echo $EVENT_DATA
 
   # Extract the request ID from the headers
   REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
