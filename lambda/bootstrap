@@ -2,8 +2,12 @@
 
 set -euo pipefail
 
-# Start the Laravel local server in the background
-php artisan serve --host=0.0.0.0 --port=8000 &
+# Start the Laravel local server in the background and log output
+php artisan serve --host=0.0.0.0 --port=8000 &> /tmp/server.log &
+
+# Wait to ensure the server has started
+sleep 2
+cat /tmp/server.log # Output the server log for debugging
 
 # Infinite loop to process incoming events
 while true; do
@@ -34,7 +38,7 @@ while true; do
   CURL_RESPONSE=$(curl -sS -X "$REQ_METHOD" "http://127.0.0.1:8000$REQ_PATH" \
     -H "Content-Type: $CONTENT_TYPE" \
     -d "$REQ_BODY" \
-    -D -) # -D - captures the headers in the response
+    -D -)
 
   # Split headers and body
   RESPONSE_HEADERS=$(echo "$CURL_RESPONSE" | sed -n '/^HTTP\//,$p' | sed '/^\r$/q')
