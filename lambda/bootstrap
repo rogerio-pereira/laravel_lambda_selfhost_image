@@ -3,9 +3,9 @@
 set -euo pipefail
 
 # Start the Laravel local server in the background and log output
-# php /var/www/html/artisan serve --host=0.0.0.0 --port=8000 &> /tmp/server.log &
+php /var/www/html/artisan serve --host=0.0.0.0 --port=8000 &
 # Start PHP’s built-in server with the correct document root
-php -S 0.0.0.0:8000 -t /var/www/html/public &
+# php -S 0.0.0.0:8000 -t /var/www/html/public &
 
 # Wait to ensure the server has started
 sleep 2
