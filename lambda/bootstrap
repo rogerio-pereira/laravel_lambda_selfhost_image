@@ -5,7 +5,7 @@ set -euo pipefail
 # Start the Laravel local server in the background and log output
 # php /var/www/html/artisan serve --host=0.0.0.0 --port=8000 &> /tmp/server.log &
 # Start PHP’s built-in server with the correct document root
-php -S 0.0.0.0:8000 -t /var/www/html/public &
+php /var/www/html/artisan serve --port=8000&
 
 # Wait to ensure the server has started
 sleep 2
@@ -28,6 +28,10 @@ while true; do
   REQ_METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
   REQ_BODY=$(echo "$EVENT_DATA" | jq -r '.body')
 
+  echo $REQ_PATH
+  echo $REQ_METHOD
+  echo $REQ_BODY
+
   # Decode the body if it's base64-encoded
   IS_BASE64_ENCODED=$(echo "$EVENT_DATA" | jq -r '.isBase64Encoded')
   if [ "$IS_BASE64_ENCODED" == "true" ]; then
@@ -38,7 +42,7 @@ while true; do
   CONTENT_TYPE=$(echo "$EVENT_DATA" | jq -r '.headers["content-type"] // "application/json"')
 
   # Send the request to the local Laravel server using curl
-  CURL_RESPONSE=$(curl -sS -X "$REQ_METHOD" "http://127.0.0.1:8000$REQ_PATH" \
+  CURL_RESPONSE=$(curl -sS -X "$REQ_METHOD" "http://localhost:8000$REQ_PATH" \
     -H "Content-Type: $CONTENT_TYPE" \
     -d "$REQ_BODY" \
     -D -)
