@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Start the Laravel local server in the background
-php artisan serve --host=0.0.0.0 --port=80 &
+php artisan serve --host=0.0.0.0 --port=8000 &
 
 # Infinite loop to process incoming events
 while true; do
@@ -31,7 +31,7 @@ while true; do
   CONTENT_TYPE=$(echo "$EVENT_DATA" | jq -r '.headers["content-type"] // "application/json"')
 
   # Send the request to the local Laravel server using curl
-  CURL_RESPONSE=$(curl -sS -X "$REQ_METHOD" "http://127.0.0.1:80$REQ_PATH" \
+  CURL_RESPONSE=$(curl -sS -X "$REQ_METHOD" "http://127.0.0.1:8000$REQ_PATH" \
     -H "Content-Type: $CONTENT_TYPE" \
     -d "$REQ_BODY" \
     -D -) # -D - captures the headers in the response
