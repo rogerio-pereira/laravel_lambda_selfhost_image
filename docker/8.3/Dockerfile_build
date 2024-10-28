@@ -91,6 +91,4 @@ RUN chmod +x /var/task/bootstrap
 RUN php artisan optimize:clear && \
     php artisan optimize
 
-RUN php /var/www/html/artisan serve --host=0.0.0.0 --port=8000
-
 ENTRYPOINT /var/task/bootstrap
