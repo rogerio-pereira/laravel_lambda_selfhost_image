@@ -8,7 +8,7 @@ php /var/www/html/artisan serve --host=0.0.0.0 --port=8000 &
 # php -S 0.0.0.0:8000 -t /var/www/html/public &
 
 # Wait to ensure the server has started
-# sleep 3
+sleep 2
 # cat /tmp/server.log # Output the server log for debugging
 
 
