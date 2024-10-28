@@ -41,6 +41,8 @@ while true; do
   # Set the Content-Type header, if necessary
   CONTENT_TYPE=$(echo "$EVENT_DATA" | jq -r '.headers["content-type"] // "application/json"')
 
+  echo $CONTENT_TYPE
+
   # Send the request to the local Laravel server using curl
   CURL_RESPONSE=$(curl -sS -X "$REQ_METHOD" "http://localhost:8000$REQ_PATH" \
     -H "Content-Type: $CONTENT_TYPE" \
@@ -51,8 +53,12 @@ while true; do
   RESPONSE_HEADERS=$(echo "$CURL_RESPONSE" | sed -n '/^HTTP\//,$p' | sed '/^\r$/q')
   RESPONSE_BODY=$(echo "$CURL_RESPONSE" | sed -n '/^\r$/,$p' | tail -n +2)
 
+  echo $RESPONSE_HEADERS
+
   # Determine status code from the first line of headers
   STATUS_CODE=$(echo "$RESPONSE_HEADERS" | head -n 1 | awk '{print $2}')
+
+  echo $STATUS_CODE
 
   # Build the JSON response for API Gateway
   RESPONSE_JSON=$(cat <<EOF
