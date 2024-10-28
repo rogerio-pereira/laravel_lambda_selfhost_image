@@ -52,6 +52,7 @@ while true; do
   # Split headers and body
   RESPONSE_HEADERS=$(echo "$CURL_RESPONSE" | sed -n '/^HTTP\//,$p' | sed '/^\r$/q')
   RESPONSE_BODY=$(echo "$CURL_RESPONSE" | sed -n '/^\r$/,$p' | tail -n +2)
+  RESPONSE_CONTENT_TYPE=$(echo "$RESPONSE_HEADERS" | grep -i 'Content-Type:' | cut -d ' ' -f2 | tr -d '\r')
 
   echo $RESPONSE_HEADERS
 
@@ -59,13 +60,14 @@ while true; do
   STATUS_CODE=$(echo "$RESPONSE_HEADERS" | head -n 1 | awk '{print $2}')
 
   echo $STATUS_CODE
+  echo $RESPONSE_CONTENT_TYPE
 
   # Build the JSON response for API Gateway
   RESPONSE_JSON=$(cat <<EOF
 {
   "statusCode": $STATUS_CODE,
   "headers": {
-    "Content-Type": "$CONTENT_TYPE"
+    "Content-Type": "$RESPONSE_CONTENT_TYPE"
   },
   "body": $(echo "$RESPONSE_BODY" | jq -Rs .)
 }
