@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+# Start the Laravel local server in the background
+php artisan serve --host=0.0.0.0 --port=80 &
+
 # Infinite loop to process incoming events
 while true; do
   # Create a temporary file to store headers
@@ -13,21 +16,41 @@ while true; do
   # Extract the request ID from the headers
   REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
 
-  # Parse the path and method from the event data
+  # Parse the path, method, and body from the event data
   REQ_PATH=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.path')
   REQ_METHOD=$(echo "$EVENT_DATA" | jq -r '.requestContext.http.method')
+  REQ_BODY=$(echo "$EVENT_DATA" | jq -r '.body')
 
-  # Pass the path, method, and full request data to Laravel
-  LARAVEL_RESPONSE=$(REQUEST_METHOD="$REQ_METHOD" REQUEST_URI="$REQ_PATH" php /var/www/html/public/index.php 2>&1)
+  # Decode the body if it's base64-encoded
+  IS_BASE64_ENCODED=$(echo "$EVENT_DATA" | jq -r '.isBase64Encoded')
+  if [ "$IS_BASE64_ENCODED" == "true" ]; then
+    REQ_BODY=$(echo "$REQ_BODY" | base64 --decode)
+  fi
 
-  # Build response to send back to API Gateway
+  # Set the Content-Type header, if necessary
+  CONTENT_TYPE=$(echo "$EVENT_DATA" | jq -r '.headers["content-type"] // "application/json"')
+
+  # Send the request to the local Laravel server using curl
+  CURL_RESPONSE=$(curl -sS -X "$REQ_METHOD" "http://127.0.0.1:80$REQ_PATH" \
+    -H "Content-Type: $CONTENT_TYPE" \
+    -d "$REQ_BODY" \
+    -D -) # -D - captures the headers in the response
+
+  # Split headers and body
+  RESPONSE_HEADERS=$(echo "$CURL_RESPONSE" | sed -n '/^HTTP\//,$p' | sed '/^\r$/q')
+  RESPONSE_BODY=$(echo "$CURL_RESPONSE" | sed -n '/^\r$/,$p' | tail -n +2)
+
+  # Determine status code from the first line of headers
+  STATUS_CODE=$(echo "$RESPONSE_HEADERS" | head -n 1 | awk '{print $2}')
+
+  # Build the JSON response for API Gateway
   RESPONSE_JSON=$(cat <<EOF
 {
-  "statusCode": 200,
+  "statusCode": $STATUS_CODE,
   "headers": {
-    "Content-Type": "text/html"
+    "Content-Type": "$CONTENT_TYPE"
   },
-  "body": $(echo "$LARAVEL_RESPONSE" | jq -Rs .)
+  "body": $(echo "$RESPONSE_BODY" | jq -Rs .)
 }
 EOF
   )
